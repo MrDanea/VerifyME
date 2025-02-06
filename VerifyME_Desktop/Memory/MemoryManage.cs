@@ -80,5 +80,6 @@ namespace VerifyME_Desktop.Memory
                 Directory.Delete(dir, true);
             }
         }
+
     }
 }

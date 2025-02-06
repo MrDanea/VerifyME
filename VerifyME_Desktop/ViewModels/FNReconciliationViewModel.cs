@@ -1,6 +1,8 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -8,34 +10,30 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using VerifyME_Desktop.Core;
+using VerifyME_Desktop.Models;
 using VerifyME_Desktop.Views;
 
 namespace VerifyME_Desktop.ViewModels
 {
-    public class FNReconciliationViewModel
+    public class FNReconciliationViewModel : INotifyPCME
     {
         private readonly INavigationService _navigationService;
         public ICommand ImportLabelsCommand { get; private set; }
         public ICommand ImportImagesCommand { get; private set; }
+        public ObservableCollection<FNReconciliationModel> Items { get; set; }
 
         public FNReconciliationViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
             ImportLabelsCommand = new RelayCommand(ExecuteImportLabelsCommand);
             ImportImagesCommand = new RelayCommand(ExecuteImportImagesCommand);
-
+            Items = new ObservableCollection<FNReconciliationModel>();
+            LoadDirectory(Memory.MemoryManage.Storage);
         }
-        private void ExecuteImportLabelsCommand(object parameter)
+        private void SaveFile(OpenFileDialog openFileDialog, string destinationFolder)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            if (openFileDialog.ShowDialog() == true && destinationFolder != null)
             {
-                Title = "Chọn file để import",
-                Filter = "Text Files (*.txt)|*.txt",
-                Multiselect = true 
-            };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string destinationFolder = Memory.MemoryManage.Labels; 
                 foreach (string selectedFilePath in openFileDialog.FileNames)
                 {
                     try
@@ -53,28 +51,92 @@ namespace VerifyME_Desktop.ViewModels
                 MessageBox.Show("Đã sao chép tất cả file thành công!");
             }
         }
+        private void ExecuteImportLabelsCommand(object parameter)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Chọn file để import",
+                Filter = $"Text Files (*.txt)|*.txt",
+                Multiselect = true
+            };
+            SaveFile(openFileDialog, Memory.MemoryManage.Labels);
+        }
         private void ExecuteImportImagesCommand(object parameter) 
         {
-
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Chọn file để import",
+                Filter = $"Image Files (*.png;*.jpg)|*.png;*.jpg",
+                Multiselect = true
+            };
+            SaveFile(openFileDialog, Memory.MemoryManage.Images);
         }
-        private void ProcessFile(string filePath)
+        private void LoadDirectory(string path)
         {
             try
             {
-                // Ví dụ xử lý file: đọc nội dung file text
-                if (Path.GetExtension(filePath).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                var dirInfo = new DirectoryInfo(path);
+
+                foreach (var directory in dirInfo.GetDirectories())
                 {
-                    string fileContent = File.ReadAllText(filePath);
-                    MessageBox.Show($"Nội dung file:\n{fileContent}", "Nội dung File", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var item = new FNReconciliationModel
+                    {
+                        Name = directory.Name,
+                        FullPath = directory.FullName,
+                        IsDirectory = true
+                    };
+                    Items.Add(item);
+                    LoadSubDirectories(item);
                 }
-                else
+
+                foreach (var file in dirInfo.GetFiles())
                 {
-                    MessageBox.Show("Không hỗ trợ loại file này!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    var item = new FNReconciliationModel
+                    {
+                        Name = file.Name,
+                        FullPath = file.FullName,
+                        IsDirectory = false
+                    };
+                    Items.Add(item);
                 }
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException)
             {
-                MessageBox.Show($"Lỗi khi xử lý file: {ex.Message}", "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Xử lý ngoại lệ nếu không có quyền truy cập
+            }
+        }
+        private void LoadSubDirectories(FNReconciliationModel item)
+        {
+            try
+            {
+                var dirInfo = new DirectoryInfo(item.FullPath);
+
+                foreach (var directory in dirInfo.GetDirectories())
+                {
+                    var subItem = new FNReconciliationModel
+                    {
+                        Name = directory.Name,
+                        FullPath = directory.FullName,
+                        IsDirectory = true
+                    };
+                    item.Children.Add(subItem);
+                    LoadSubDirectories(subItem);
+                }
+
+                foreach (var file in dirInfo.GetFiles())
+                {
+                    var subItem = new FNReconciliationModel
+                    {
+                        Name = file.Name,
+                        FullPath = file.FullName,
+                        IsDirectory = false
+                    };
+                    item.Children.Add(subItem);
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Xử lý ngoại lệ nếu không có quyền truy cập
             }
         }
     }

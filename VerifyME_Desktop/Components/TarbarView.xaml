@@ -21,6 +21,11 @@
                 <MenuItem Header="BoundingBox Reconciliation" Command="{Binding BBRButtonCommand}"></MenuItem>
                 <MenuItem Header="Keypoint Reconciliation" Command="{Binding KPRButtonCommand}"></MenuItem>
             </MenuItem>
+            <MenuItem Header="Import"
+          Style="{StaticResource Tarbar}">
+                <MenuItem Header="Labels" Command="{Binding FNDButtonCommand}"></MenuItem>
+                <MenuItem Header="Images" Command="{Binding BBRButtonCommand}"></MenuItem>
+            </MenuItem>
         </Menu>
     </Grid>
 </UserControl>
