@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="VerifyME_Desktop.Components.TarbarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VerifyME_Desktop.Components"
+             mc:Ignorable="d" 
+             d:DesignHeight="25">
+    <Grid>
+        <Menu>
+            <MenuItem Header="File"
+                      Style="{StaticResource Tarbar}">
+                <MenuItem Header="New" Command="{Binding NewButtonCommand}"></MenuItem>
+                <MenuItem Header="Open" Command="{Binding OpenButtonCommand}"></MenuItem>
+                <MenuItem Header="Memory" Command="{Binding MemoryButtonCommand}"></MenuItem>
+                <MenuItem Header="Manage" Command="{Binding ManageButtonCommand}"></MenuItem>
+            </MenuItem>
+            <MenuItem Header="Tools"
+                      Style="{StaticResource Tarbar}">
+                <MenuItem Header="File Name Reconciliation" Command="{Binding FNDButtonCommand}"></MenuItem>
+                <MenuItem Header="BoundingBox Reconciliation" Command="{Binding BBRButtonCommand}"></MenuItem>
+                <MenuItem Header="Keypoint Reconciliation" Command="{Binding KPRButtonCommand}"></MenuItem>
+            </MenuItem>
+        </Menu>
+    </Grid>
+</UserControl>
