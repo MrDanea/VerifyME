@@ -12,20 +12,37 @@
             <ColumnDefinition Width="6*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel>
-            <Button Content="Import">
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Header="Labels" 
-                                  Command="{Binding ImportLabelsCommand}"/>
-                        <MenuItem Header="Images"
-                                  Command="{Binding ImportImagesCommand}"/>
-                    </ContextMenu>
-                </Button.ContextMenu>
-            </Button>
-        </StackPanel>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <StackPanel Margin="10 10 10 0">
+                <Label Content="Tools"
+                       HorizontalAlignment="Center"></Label>
+                <Button Content="Reconciliation"
+                        Height="40"></Button>
+                <TextBox x:Name="TextSearch"></TextBox>
+                <Button Content="Search"
+                        Background="DarkGreen"
+                        Foreground="WhiteSmoke"></Button>
+            </StackPanel>
+            <StackPanel Grid.Row="1">
+                <Label Content="Result"
+                       HorizontalAlignment="Center"></Label>
+                <Border BorderBrush="Black"
+                        BorderThickness="1"
+                        Margin="10">
+                    <TextBlock x:Name="result"
+                               Text="Ket qua se duoc hien thi o day"
+                               TextWrapping="Wrap"
+                               Margin="2"></TextBlock>
+                </Border>
+            </StackPanel>
+        </Grid>
 
-        <Grid Grid.Column="1">
+
+        <Grid Grid.Column="1" Margin="0 0 0 10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
                 <ColumnDefinition Width="2*"/>
@@ -41,10 +58,13 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="14"/>
-                <TreeView ItemsSource="{Binding Items}" Grid.Row="1">
+                <TreeView ItemsSource="{Binding Items}" 
+                          MouseRightButtonDown="TreeView_MouseRightButtonDown"
+                          Grid.Row="1">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Name}" />
+                            <TextBlock Text="{Binding Name}">
+                            </TextBlock>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>
                 </TreeView>
@@ -60,8 +80,10 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="14"/>
-                <Border x:Name="FileContent">
-                    
+                <Border x:Name="FileContent"
+                        Grid.Row="1">
+                    <Image Source="{Binding ResizedImage}"
+                           Stretch="Uniform"></Image>
                 </Border>
             </Grid>
         </Grid>

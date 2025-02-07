@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:VerifyME_Desktop"
         mc:Ignorable="d"
-        Title="VerifyME - Công cụ kiểm tra nhãn" Height="450" Width="800" FontSize="14"
+        Title="VerifyME - Công cụ kiểm tra nhãn" Height="500" Width="800" FontSize="14"
         Icon="{StaticResource checked}"
         WindowStartupLocation="CenterScreen">
     <Grid>

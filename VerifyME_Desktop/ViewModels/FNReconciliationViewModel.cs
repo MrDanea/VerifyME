@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using VerifyME_Desktop.Core;
 using VerifyME_Desktop.Models;
 using VerifyME_Desktop.Views;
@@ -18,58 +19,36 @@ namespace VerifyME_Desktop.ViewModels
     public class FNReconciliationViewModel : INotifyPCME
     {
         private readonly INavigationService _navigationService;
-        public ICommand ImportLabelsCommand { get; private set; }
-        public ICommand ImportImagesCommand { get; private set; }
         public ObservableCollection<FNReconciliationModel> Items { get; set; }
-
+        private BitmapImage _resizedImage;
+        public BitmapImage ResizedImage { get => _resizedImage; set => SetProperty(ref _resizedImage, value); }
+        public ICommand TestCommand { get; private set; }
+        public ICommand DeleteCommand { get; private set; }
         public FNReconciliationViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            ImportLabelsCommand = new RelayCommand(ExecuteImportLabelsCommand);
-            ImportImagesCommand = new RelayCommand(ExecuteImportImagesCommand);
             Items = new ObservableCollection<FNReconciliationModel>();
             LoadDirectory(Memory.MemoryManage.Storage);
+            ResizeImage(Path.Combine(Memory.MemoryManage.Images, "Screenshot 2024-09-20 000158.png"));
+            TestCommand = new RelayCommand(ExecuteOpenCommand);
         }
-        private void SaveFile(OpenFileDialog openFileDialog, string destinationFolder)
+        private void ExecuteOpenCommand(object parameter) 
         {
-            if (openFileDialog.ShowDialog() == true && destinationFolder != null)
-            {
-                foreach (string selectedFilePath in openFileDialog.FileNames)
-                {
-                    try
-                    {
-                        string fileName = System.IO.Path.GetFileName(selectedFilePath);
-                        string destinationFilePath = System.IO.Path.Combine(destinationFolder, fileName);
-                        System.IO.File.Copy(selectedFilePath, destinationFilePath, overwrite: true);
-                        Console.WriteLine($"Đã sao chép file: {fileName}");
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Lỗi khi sao chép file: {ex.Message}");
-                    }
-                }
-                MessageBox.Show("Đã sao chép tất cả file thành công!");
-            }
+            string? content = parameter as string;
+            MessageBox.Show(content);
         }
-        private void ExecuteImportLabelsCommand(object parameter)
+        private void ExecuteDeleteCommand(object parameter)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog()
-            {
-                Title = "Chọn file để import",
-                Filter = $"Text Files (*.txt)|*.txt",
-                Multiselect = true
-            };
-            SaveFile(openFileDialog, Memory.MemoryManage.Labels);
+
         }
-        private void ExecuteImportImagesCommand(object parameter) 
+        public void ResizeImage(string imagePath)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog()
-            {
-                Title = "Chọn file để import",
-                Filter = $"Image Files (*.png;*.jpg)|*.png;*.jpg",
-                Multiselect = true
-            };
-            SaveFile(openFileDialog, Memory.MemoryManage.Images);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.UriSource = new Uri(imagePath);
+            bitmap.EndInit();
+            bitmap.Freeze();
+            ResizedImage = bitmap;
         }
         private void LoadDirectory(string path)
         {
@@ -88,7 +67,6 @@ namespace VerifyME_Desktop.ViewModels
                     Items.Add(item);
                     LoadSubDirectories(item);
                 }
-
                 foreach (var file in dirInfo.GetFiles())
                 {
                     var item = new FNReconciliationModel

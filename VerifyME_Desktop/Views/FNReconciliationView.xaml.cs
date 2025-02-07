@@ -22,7 +22,21 @@ namespace VerifyME_Desktop.Views
         public FNReconciliationView()
         {
             InitializeComponent();
-            DataContext = new FNReconciliationViewModel(ServiceLocator.NavigationService);
+            FNReconciliationViewModel fNReconciliationViewModel = new FNReconciliationViewModel(ServiceLocator.NavigationService);
+            this.DataContext = fNReconciliationViewModel;
+        }
+
+        private void TreeView_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            var clickedElement = e.OriginalSource as FrameworkElement;
+
+            if (clickedElement?.DataContext is Models.FNReconciliationModel item)
+            {
+                if (DataContext is FNReconciliationViewModel vm)
+                {
+                    vm.TestCommand.Execute(item.Name);
+                }
+            }
         }
     }
 }

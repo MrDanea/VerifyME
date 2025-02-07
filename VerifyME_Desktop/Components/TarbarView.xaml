@@ -23,8 +23,8 @@
             </MenuItem>
             <MenuItem Header="Import"
           Style="{StaticResource Tarbar}">
-                <MenuItem Header="Labels" Command="{Binding FNDButtonCommand}"></MenuItem>
-                <MenuItem Header="Images" Command="{Binding BBRButtonCommand}"></MenuItem>
+                <MenuItem Header="Labels" Command="{Binding ImportLabelsCommand}"></MenuItem>
+                <MenuItem Header="Images" Command="{Binding ImportImagesCommand}"></MenuItem>
             </MenuItem>
         </Menu>
     </Grid>
