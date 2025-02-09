@@ -80,6 +80,45 @@ namespace VerifyME_Desktop.Memory
                 Directory.Delete(dir, true);
             }
         }
-
+        public static bool TryReadTextFromFile(string filePath, out string? fileContent)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    fileContent = File.ReadAllText(filePath);
+                    return true;
+                }
+                else
+                {
+                    fileContent = null;
+                    return false;
+                }
+            }
+            catch
+            {
+                fileContent = null;
+                return false;
+            }
+        }
+        public static bool DeleteFile(string filePath)
+        {
+            try
+            {
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

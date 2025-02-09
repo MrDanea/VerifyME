@@ -25,8 +25,7 @@ namespace VerifyME_Desktop.Views
             FNReconciliationViewModel fNReconciliationViewModel = new FNReconciliationViewModel(ServiceLocator.NavigationService);
             this.DataContext = fNReconciliationViewModel;
         }
-
-        private void TreeView_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        private void TreeView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             var clickedElement = e.OriginalSource as FrameworkElement;
 
@@ -34,7 +33,24 @@ namespace VerifyME_Desktop.Views
             {
                 if (DataContext is FNReconciliationViewModel vm)
                 {
-                    vm.TestCommand.Execute(item.Name);
+                    vm.OpenCommand.Execute(item.Name);
+                }
+            }
+        }
+
+        private void TreeView_KeyDown(object sender, KeyEventArgs e)
+        {
+            var key = e.Key;
+            if (key == Key.Delete) 
+            {
+                var clickedElement = e.OriginalSource as FrameworkElement;
+
+                if (clickedElement?.DataContext is Models.FNReconciliationModel item)
+                {
+                    if (DataContext is FNReconciliationViewModel vm)
+                    {
+                        vm.DeleteCommand.Execute(item.Name);
+                    }
                 }
             }
         }

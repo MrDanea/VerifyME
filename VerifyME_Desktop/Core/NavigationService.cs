@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -13,6 +14,7 @@ namespace VerifyME_Desktop.Core
     {
         void Navigate(UserControl view);
         void NavigateToDefault();
+        void Reload(Type? viewType);
     }
     public class NavigationService : INavigationService
     {
@@ -42,6 +44,25 @@ namespace VerifyME_Desktop.Core
                 FontSize = 25
             };
             _mainContent.Child = welcomeText;
+        }
+        public void Reload(Type? viewType)
+        {
+            if (viewType != null)
+            {
+                UserControl? viewInstance = Activator.CreateInstance(viewType) as UserControl;
+                if (viewInstance != null)
+                {
+                    Navigate(viewInstance);
+                }
+                else
+                {
+                    MessageBox.Show("khong th khoi tao");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Không tìm thấy lớp {viewName} trong namespace.");
+            }
         }
     }
 }

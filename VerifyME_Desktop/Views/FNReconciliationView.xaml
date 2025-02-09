@@ -21,7 +21,8 @@
                 <Label Content="Tools"
                        HorizontalAlignment="Center"></Label>
                 <Button Content="Reconciliation"
-                        Height="40"></Button>
+                        Height="40"
+                        Command="{Binding ReconcButtonCommand}"></Button>
                 <TextBox x:Name="TextSearch"></TextBox>
                 <Button Content="Search"
                         Background="DarkGreen"
@@ -33,10 +34,17 @@
                 <Border BorderBrush="Black"
                         BorderThickness="1"
                         Margin="10">
-                    <TextBlock x:Name="result"
-                               Text="Ket qua se duoc hien thi o day"
-                               TextWrapping="Wrap"
-                               Margin="2"></TextBlock>
+                    <StackPanel>
+                        <Label Content="Valid file"/>
+                        <TextBlock Text="{Binding TextResult}"
+                                   TextWrapping="Wrap"
+                                   Margin="2"></TextBlock>
+                        <Label Content="Invalid files"/>
+                        <TextBlock Text="{Binding TextResult}"
+                                   TextWrapping="Wrap"
+                                   Margin="2"
+                                   ScrollViewer.CanContentScroll="True"></TextBlock>
+                    </StackPanel>
                 </Border>
             </StackPanel>
         </Grid>
@@ -59,7 +67,8 @@
                        VerticalAlignment="Center"
                        FontSize="14"/>
                 <TreeView ItemsSource="{Binding Items}" 
-                          MouseRightButtonDown="TreeView_MouseRightButtonDown"
+                          MouseDoubleClick="TreeView_MouseDoubleClick"
+                          KeyDown="TreeView_KeyDown"
                           Grid.Row="1">
                     <TreeView.ItemTemplate>
                         <HierarchicalDataTemplate ItemsSource="{Binding Children}">
@@ -80,11 +89,14 @@
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="14"/>
-                <Border x:Name="FileContent"
-                        Grid.Row="1">
+                <Grid Grid.Row="1">
                     <Image Source="{Binding ResizedImage}"
-                           Stretch="Uniform"></Image>
-                </Border>
+                           Stretch="Uniform"
+                           Visibility="{Binding IsImage, Converter={StaticResource BoolToVis}}"></Image>
+                    <TextBlock Text="{Binding TextContent}"
+                               Visibility="{Binding IsText, Converter={StaticResource BoolToVis}}"
+                               TextWrapping="Wrap"></TextBlock>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

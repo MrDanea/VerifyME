@@ -103,6 +103,7 @@ namespace VerifyME_Desktop.ViewModels
                         Console.WriteLine($"Lỗi khi sao chép file: {ex.Message}");
                     }
                 }
+                _navigationService.Navigate(new FNReconciliationView());
                 MessageBox.Show("Đã sao chép tất cả file thành công!");
             }
         }
