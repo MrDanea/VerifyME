@@ -8,6 +8,7 @@
         <ResourceDictionary>
             <BitmapImage x:Key="checked" UriSource="pack://application:,,,/assets/checked.ico"></BitmapImage>
             <local:BooleantoHiddenConverter x:Key="BoolToVis" />
+            <local:ImageSizeConverter x:Key="ImageSize" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Style/TarbarRD.xaml"/>
             </ResourceDictionary.MergedDictionaries>

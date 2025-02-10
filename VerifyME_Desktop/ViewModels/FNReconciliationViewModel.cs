@@ -15,8 +15,6 @@ using System.Xml.Linq;
 using VerifyME_Desktop.Core;
 using VerifyME_Desktop.Models;
 using VerifyME_Desktop.Views;
-using static System.Net.WebRequestMethods;
-
 namespace VerifyME_Desktop.ViewModels
 {
     public class FNReconciliationViewModel : INotifyPCME, IViewTypeResolver
@@ -123,12 +121,18 @@ namespace VerifyME_Desktop.ViewModels
         }
         private void ExecuteReconcButtonCommand(object parameter) 
         {
-            string contentm = "";
+            string cont = ""; 
+            string filePath = Path.Combine(Memory.MemoryManage.ListofValidFileNames, "ListofValidFileNames.txt");
             foreach (var content in CompareFiles(LabelHashsetCache, ImageHashsetCache))
             {
-                contentm += $"{content}\n";
+                cont += $"{content}\n";
             }
-            TextResult = contentm;
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+            }
+            File.WriteAllText(filePath, cont);
+            TextResult = cont;
         }
         public void ResizeImage(string imagePath)
         {

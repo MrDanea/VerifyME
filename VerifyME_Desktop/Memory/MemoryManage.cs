@@ -12,8 +12,9 @@ namespace VerifyME_Desktop.Memory
     {
         public static string Project = Environment.CurrentDirectory;
         public static string Storage = Path.Combine(Project, "Storage");
-        public static string Labels = Path.Combine(Project, Storage, "Labels");
-        public static string Images = Path.Combine(Project, Storage, "Images");
+        public static string Labels = Path.Combine(Storage, "Labels");
+        public static string Images = Path.Combine(Storage, "Images");
+        public static string ListofValidFileNames = Path.Combine(Storage, "ListofValidFileNames");
         private static int Exist(string LINK) => Directory.Exists(LINK) ? 1 : 0;
         /// <summary>
         /// Array [1,0,1] => 101
@@ -29,23 +30,43 @@ namespace VerifyME_Desktop.Memory
             }
             return result;
         }
-        public static void Create() 
+        public static void Create()
         {
-            if(Path.Exists(Storage))
+            if (Directory.Exists(Storage))
             {
-                int CASE = Merge(Exist(Labels), Exist(Images));
+                int CASE = Merge(Exist(ListofValidFileNames), Exist(Labels), Exist(Images));
                 switch (CASE)
                 {
-                    case 0: Directory.CreateDirectory(Labels); Directory.CreateDirectory(Images); break; //00
-                    case 1: Directory.CreateDirectory(Images); break; //01
-                    case 2: Directory.CreateDirectory(Labels); break;//10
-                    default: break; //11
+                    case 0: 
+                        Directory.CreateDirectory(Labels);
+                        Directory.CreateDirectory(Images);
+                        Directory.CreateDirectory(ListofValidFileNames);
+                        break;
+
+                    case 1: 
+                        Directory.CreateDirectory(Images);
+                        Directory.CreateDirectory(ListofValidFileNames);
+                        break;
+
+                    case 2: 
+                        Directory.CreateDirectory(Labels);
+                        Directory.CreateDirectory(ListofValidFileNames);
+                        break;
+
+                    case 3:
+                        Directory.CreateDirectory(ListofValidFileNames);
+                        break;
+                    default: 
+                        break;
                 }
                 return;
             }
-            Directory.CreateDirectory(Labels); 
+            Directory.CreateDirectory(Storage);
+            Directory.CreateDirectory(Labels);
             Directory.CreateDirectory(Images);
+            Directory.CreateDirectory(ListofValidFileNames);
         }
+
         public static int CountLabelFiles()
         {
             string[] txtFiles = Directory.GetFiles(Labels, "*.txt", SearchOption.AllDirectories);

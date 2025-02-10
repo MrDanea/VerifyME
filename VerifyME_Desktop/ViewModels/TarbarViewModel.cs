@@ -59,7 +59,7 @@ namespace VerifyME_Desktop.ViewModels
         }
         private void ExecuteBBRButtonCommand(object parameter)
         {
-            MessageBox.Show("Dang trong qua trinh phat trien");
+            _navigationService.Navigate(new BBReconciliationView());
         }
         private void ExecuteKPRButtonCommand(object parameter)
         {

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using VerifyME_Desktop.Core;
+using VerifyME_Desktop.ViewModels;
 
 namespace VerifyME_Desktop.Views
 {
@@ -25,6 +26,16 @@ namespace VerifyME_Desktop.Views
         {
             InitializeComponent();
             DataContext = new ViewModels.BBReconciliationViewModel(ServiceLocator.NavigationService);
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var clickedElement = e.OriginalSource as FrameworkElement;
+
+            if (DataContext is BBReconciliationViewModel vm)
+            {
+                vm.OpenCommand.Execute(null);
+            }
         }
     }
 }
