@@ -17,17 +17,14 @@ using VerifyME_Desktop.ViewModels;
 
 namespace VerifyME_Desktop.Views
 {
-    /// <summary>
-    /// Interaction logic for BBReconciliationView.xaml
-    /// </summary>
     public partial class BBReconciliationView : UserControl
     {
-        public BBReconciliationViewModel bBReconciliationViewModel { get; set; }
+        public BBReconciliationViewModel viewmodel { get; set; }
         public BBReconciliationView()
         {
             InitializeComponent();
-            bBReconciliationViewModel = new ViewModels.BBReconciliationViewModel(ServiceLocator.NavigationService);
-            DataContext = bBReconciliationViewModel;
+            viewmodel = new ViewModels.BBReconciliationViewModel(ServiceLocator.NavigationService);
+            DataContext = viewmodel;
         }
 
 
@@ -44,13 +41,13 @@ namespace VerifyME_Desktop.Views
         private void Image_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var image = sender as Image;
-            if (image != null && bBReconciliationViewModel != null)
+            if (image != null && viewmodel != null)
             {
                 var width = image.ActualWidth;
                 var height = image.ActualHeight;
 
-                bBReconciliationViewModel.ImageWidth = width;
-                bBReconciliationViewModel.ImageHeight = height;
+                viewmodel.ImageWidth = width;
+                viewmodel.ImageHeight = height;
             }
         }
         private void Rectangle_MouseEnter(object sender, MouseEventArgs e)

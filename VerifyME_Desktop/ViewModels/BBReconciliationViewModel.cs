@@ -36,20 +36,21 @@ namespace VerifyME_Desktop.ViewModels
         public double ImageHeight { get => _imageheigth; set { SetProperty(ref _imageheigth, value); } }
         public double ImageWidth { get => _imagewidth; set { SetProperty(ref _imagewidth, value); } }
         public string[] ListFileName { get => _listFileName; set => _listFileName = value; }
-        public ICommand OpenCommand;
-        public ICommand NextCommand;
-        public ICommand BackCommand;
+        public ICommand OpenCommand { get; private set; }
+        public ICommand NextCommand { get; private set; }
+        public ICommand BackCommand { get; private set; }
         public BBReconciliationViewModel(INavigationService navigationService) 
         {
             _navigationService = navigationService;
             _resolver = new ViewTypeResolver(this);
             OpenCommand = new RelayCommand(ExecuteOpenCommand);
+            NextCommand = new RelayCommand(ExecuteNextCommand);
+            BackCommand = new RelayCommand(ExecuteBackCommand);
             _imageheigth = 0; _imagewidth = 0;
             var file = File.ReadAllLines(Path.Combine(Memory.MemoryManage.ListofValidFileNames, "ListofValidFileNames.txt"));
             this.ListofValidFileNames = new ObservableCollection<string>(file);
             this.ListFileName = ListofValidFileNames.ToArray<string>();
-            NextCommand = new RelayCommand(ExecuteNextCommand);
-            BackCommand = new RelayCommand(ExecuteBackCommand);
+            
         }
         private void ExecuteOpenCommand(object parameter) { Open(SelectItem); }
         private void Open(string name) {
@@ -79,11 +80,14 @@ namespace VerifyME_Desktop.ViewModels
             int currentIndex = Array.IndexOf(ListFileName, SelectItem);
             if (currentIndex == -1) { return; }
             string? next = (currentIndex < ListFileName.Length - 1) ? ListFileName[currentIndex + 1] : null;
-            if(next != null) { Open(next); }
+            if(next != null) { Open(next); SelectItem = next; }
         }
         private void ExecuteBackCommand (object parameter)
         {
-
+            int currentIndex = Array.IndexOf(ListFileName, SelectItem);
+            if (currentIndex == -1) { return; }
+            string? previous = (currentIndex > 0) ? ListFileName[currentIndex - 1] : null; 
+            if (previous != null) { Open(previous); SelectItem = previous; }
         }
         private void DrawRectangle(string name)
         {
