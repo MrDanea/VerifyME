@@ -22,11 +22,14 @@ namespace VerifyME_Desktop.Views
     /// </summary>
     public partial class BBReconciliationView : UserControl
     {
+        public BBReconciliationViewModel bBReconciliationViewModel { get; set; }
         public BBReconciliationView()
         {
             InitializeComponent();
-            DataContext = new ViewModels.BBReconciliationViewModel(ServiceLocator.NavigationService);
+            bBReconciliationViewModel = new ViewModels.BBReconciliationViewModel(ServiceLocator.NavigationService);
+            DataContext = bBReconciliationViewModel;
         }
+
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -35,6 +38,66 @@ namespace VerifyME_Desktop.Views
             if (DataContext is BBReconciliationViewModel vm)
             {
                 vm.OpenCommand.Execute(null);
+            }
+        }
+
+        private void Image_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var image = sender as Image;
+            if (image != null && bBReconciliationViewModel != null)
+            {
+                var width = image.ActualWidth;
+                var height = image.ActualHeight;
+
+                bBReconciliationViewModel.ImageWidth = width;
+                bBReconciliationViewModel.ImageHeight = height;
+            }
+        }
+        private void Rectangle_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var rectangle = sender as Rectangle;
+            if (rectangle != null)
+            {
+                // Thay đổi con trỏ chuột thành mũi tên 2 chiều khi di chuột vào
+                rectangle.Cursor = Cursors.SizeAll;
+            }
+        }
+
+        private void Rectangle_MouseLeave(object sender, MouseEventArgs e)
+        {
+            var rectangle = sender as Rectangle;
+            if (rectangle != null)
+            {
+                // Trở lại con trỏ mặc định khi chuột rời khỏi
+                rectangle.Cursor = Cursors.Arrow;
+            }
+        }
+
+        private void Rectangle_MouseMove(object sender, MouseEventArgs e)
+        {
+            var rectangle = sender as Rectangle;
+
+            if (rectangle != null)
+            {
+                // Kiểm tra vị trí chuột để thay đổi con trỏ tại các viền
+                Point position = e.GetPosition(rectangle);
+                double borderThickness = rectangle.StrokeThickness;
+
+                bool isOnLeftOrRightEdge = position.X <= borderThickness || position.X >= rectangle.Width - borderThickness;
+                bool isOnTopOrBottomEdge = position.Y <= borderThickness || position.Y >= rectangle.Height - borderThickness;
+
+                if (isOnLeftOrRightEdge)
+                {
+                    rectangle.Cursor = Cursors.SizeWE; // Mũi tên ngang (resize trái/phải)
+                }
+                else if (isOnTopOrBottomEdge)
+                {
+                    rectangle.Cursor = Cursors.SizeNS; // Mũi tên dọc (resize trên/dưới)
+                }
+                else
+                {
+                    rectangle.Cursor = Cursors.Arrow; // Trở về con trỏ bình thường
+                }
             }
         }
     }

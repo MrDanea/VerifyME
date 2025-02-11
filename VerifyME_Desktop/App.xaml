@@ -11,6 +11,7 @@
             <local:ImageSizeConverter x:Key="ImageSize" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Style/TarbarRD.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/Style/ListViewStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
