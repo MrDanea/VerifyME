@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using VerifyME_Desktop.Core;
+using System.Windows.Media;
 
 namespace VerifyME_Desktop.ViewModels
 {
-    public class BBReconciliationViewModel: INotifyPCME, IViewTypeResolver
+    public class KPReconciliationViewModel : INotifyPCME, IViewTypeResolver
     {
         private readonly INavigationService _navigationService;
         private readonly IViewTypeResolver _resolver;
@@ -19,26 +20,19 @@ namespace VerifyME_Desktop.ViewModels
         private string[] _listFileName;
         private BitmapImage _image;
         private string _selectItem;
-        private double _rectangleHeight;
-        private double _rectangleWidth;
-        private double _rectangleX;
-        private double _rectangleY;
         private double _imageheigth;
         private double _imagewidth;
         public ObservableCollection<string> ListofValidFileNames { get => _listofValidFileNames; set { SetProperty(ref _listofValidFileNames, value); } }
         public BitmapImage Image { get => _image; set { SetProperty(ref _image, value); } }
         public string SelectItem { get => _selectItem; set { SetProperty(ref _selectItem, value); } }
-        public double RectangleHeight { get => _rectangleHeight; set { SetProperty(ref _rectangleHeight, value); } }
-        public double RectangleWidth { get => _rectangleWidth; set { SetProperty(ref _rectangleWidth, value); } }
-        public double RectangleX { get => _rectangleX; set { SetProperty(ref _rectangleX, value); } }
-        public double RectangleY { get => _rectangleY; set { SetProperty(ref _rectangleY, value); } }
+        public ObservableCollection<Circle> Circles { get; set; }
         public double ImageHeight { get => _imageheigth; set { SetProperty(ref _imageheigth, value); } }
         public double ImageWidth { get => _imagewidth; set { SetProperty(ref _imagewidth, value); } }
         public string[] ListFileName { get => _listFileName; set => _listFileName = value; }
         public ICommand OpenCommand { get; private set; }
         public ICommand NextCommand { get; private set; }
         public ICommand BackCommand { get; private set; }
-        public BBReconciliationViewModel(INavigationService navigationService) 
+        public KPReconciliationViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
             _resolver = new ViewTypeResolver(this);
@@ -47,13 +41,16 @@ namespace VerifyME_Desktop.ViewModels
             BackCommand = new RelayCommand(ExecuteBackCommand);
             _imageheigth = 0; _imagewidth = 0;
             var file = File.ReadAllLines(Path.Combine(Memory.MemoryManage.ListofValidFileNames, "ListofValidFileNames.txt"));
-            this.ListofValidFileNames = new ObservableCollection<string>(file);
+            this.ListofValidFileNames = [.. file];
             this.ListFileName = ListofValidFileNames.ToArray<string>();
+            Circles = [];
             SelectItem = ListFileName[0];
             Open(SelectItem);
         }
         private void ExecuteOpenCommand(object parameter) { Open(SelectItem); }
-        private void Open(string name) {
+        private void Open(string name)
+        {
+            Circles.Clear();
             string imgpath = Path.Combine(Memory.MemoryManage.Images, $"{name}.png");
             string txtpath = Path.Combine(Memory.MemoryManage.Labels, $"{name}.txt");
             double[]? content = null;
@@ -69,29 +66,51 @@ namespace VerifyME_Desktop.ViewModels
             Image = bitmap;
             if (Memory.IFileIO.GetContentLabels(txtpath, out content))
             {
-                RectangleX = (content[1] - content[3] / 2) * bitmap.Width;
-                RectangleY = (content[2] - content[4] / 2) * bitmap.Height;
-                RectangleWidth = content[3] * bitmap.Width;
-                RectangleHeight = content[4] * bitmap.Height;
-            };
+                if(content == null) { return; }
+                int i = 5;
+                while (i < content.Length)
+                {
+                    Circles.Add(new Circle
+                    {
+                        X = content[i] * bitmap.Width,
+                        Y = content[i + 1] * bitmap.Height,
+                        Radius = 55,
+                        Color = new SolidColorBrush(Colors.Red)
+                    });
+                    i+=3;
+                }
+            }
         }
-        private void ExecuteNextCommand(object parameter) 
+        private void ExecuteNextCommand(object parameter)
         {
             int currentIndex = Array.IndexOf(ListFileName, SelectItem);
             if (currentIndex == -1) { return; }
             string? next = (currentIndex < ListFileName.Length - 1) ? ListFileName[currentIndex + 1] : null;
-            if(next != null) { Open(next); SelectItem = next; }
+            if (next != null) { Open(next); SelectItem = next; }
         }
-        private void ExecuteBackCommand (object parameter)
+        private void ExecuteBackCommand(object parameter)
         {
             int currentIndex = Array.IndexOf(ListFileName, SelectItem);
             if (currentIndex == -1) { return; }
-            string? previous = (currentIndex > 0) ? ListFileName[currentIndex - 1] : null; 
+            string? previous = (currentIndex > 0) ? ListFileName[currentIndex - 1] : null;
             if (previous != null) { Open(previous); SelectItem = previous; }
         }
         public Type GetViewType()
         {
             return _resolver.GetViewType();
+        }
+    }
+
+    public class Circle
+    {
+        private SolidColorBrush? _color;
+        public double X { get; set; }
+        public double Y { get; set; }
+        public double Radius { get; set; }
+        public SolidColorBrush Color 
+        { 
+            get => _color ??= new SolidColorBrush(Colors.Red);
+            set => _color = value;
         }
     }
 }

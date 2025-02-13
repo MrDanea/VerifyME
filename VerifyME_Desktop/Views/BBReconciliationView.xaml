@@ -75,11 +75,10 @@
                                        Canvas.Top="{Binding RectangleY}" 
                                        MouseEnter="Rectangle_MouseEnter"
                                        MouseLeave="Rectangle_MouseLeave"
-                                       MouseMove="Rectangle_MouseMove"/>        
+                                       MouseMove="Rectangle_MouseMove"/>
                         </Canvas>
                     </Grid>
                 </Viewbox>
-
             </Grid>
         </Grid>
         

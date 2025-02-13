@@ -63,7 +63,7 @@ namespace VerifyME_Desktop.ViewModels
         }
         private void ExecuteKPRButtonCommand(object parameter)
         {
-            MessageBox.Show("Dang trong qua trinh phat trien");
+            _navigationService.Navigate(new KPReconciliationView());
         }
         private void ExecuteImportLabelsCommand(object parameter)
         {
